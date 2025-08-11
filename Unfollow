@@ -1,0 +1,60 @@
+import pyautogui
+import time
+import threading
+
+blue_select_icon = 'blue_select.png'
+normal_select_icon = 'select.png'
+delete_icon = 'delete.png'
+delete_again_icon = 'delete_again.png'
+CONFIDENCE = 0.75
+LOAD_WAIT = 8  # seconds to wait after scroll
+
+stop_flag = False
+
+def click_all_buttons(icon_path):
+    found = list(pyautogui.locateAllOnScreen(icon_path, confidence=CONFIDENCE))
+    print(f"[INFO] Found {len(found)} buttons for {icon_path}")
+    for btn in found:
+        center = pyautogui.center(btn)
+        pyautogui.moveTo(center.x, center.y, duration=0.05)
+        pyautogui.click()
+        time.sleep(0.1)
+    return len(found) > 0
+
+def click_button(icon_path):
+    pos = pyautogui.locateCenterOnScreen(icon_path, confidence=CONFIDENCE)
+    if pos:
+        pyautogui.moveTo(pos.x, pos.y, duration=0.1)
+        pyautogui.click()
+        print(f"[INFO] Clicked button {icon_path}")
+        return True
+    return False
+
+def automation_loop():
+    global stop_flag
+    while not stop_flag:
+        opened_menus = click_all_buttons(blue_select_icon)
+        time.sleep(0.5)
+
+        selected = click_all_buttons(normal_select_icon)
+        time.sleep(0.5)
+
+        if opened_menus or selected:
+            if click_button(delete_icon):
+                time.sleep(0.5)
+                click_button(delete_again_icon)
+
+        pyautogui.scroll(-600)
+        time.sleep(LOAD_WAIT)
+
+print("Starting automation. Press Enter to stop.")
+
+thread = threading.Thread(target=automation_loop)
+thread.start()
+
+input()  # Wait for Enter key press
+
+stop_flag = True
+thread.join()
+
+print("Automation stopped by user.")
