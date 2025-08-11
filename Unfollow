@@ -7,7 +7,7 @@ normal_select_icon = 'select.png'
 delete_icon = 'delete.png'
 delete_again_icon = 'delete_again.png'
 CONFIDENCE = 0.75
-LOAD_WAIT = 8  # seconds to wait after scroll
+LOAD_WAIT = 8 
 
 stop_flag = False
 
